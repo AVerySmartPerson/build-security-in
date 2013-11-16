@@ -1,0 +1,9 @@
+---
+# Contains the handlers for the web role.
+#
+# Author: Mark Johnman
+# Date Last Modified: 17/11/13
+
+- name: restart apache
+  service: name=apache2 state=restarted
+

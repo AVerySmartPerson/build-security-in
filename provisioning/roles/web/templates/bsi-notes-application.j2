@@ -1,0 +1,57 @@
+# This file is an Apache Web Server configuration file for the Build Security In notes application.
+# 
+# Author: Mark Johnman
+# Date Last Modified: 17/11/13
+
+User {{ apache_user_name }}
+Group {{ apache_group_name }}
+
+# Hides Apache Web Server information from the user
+ServerSignature Off
+ServerTokens Prod
+
+<VirtualHost *:80>
+
+	ServerAdmin mark.johnman@student.bond.edu.au	
+   
+	DocumentRoot {{ source_code_directory }}
+	DirectoryIndex index.php
+	
+	<Directory />	
+		Options None
+		AllowOverride None
+		Order deny,allow
+		Deny from all	
+	</Directory>
+	
+	<Directory {{ source_code_directory }}>	
+		Options FollowSymLinks
+      AllowOverride None
+      Order allow,deny
+      Allow from all
+   
+      <LimitExcept GET POST>
+         Order deny,allow
+         Deny from all
+      </LimitExcept>
+   
+      # URL Rewriting Rules
+   
+      RewriteEngine on
+
+		RewriteCond $1 !^(index\.php|images|captcha|css|js|lib|robots\.txt)
+		RewriteRule ^(.*)$ /index.php/$1 [L]			
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit, alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+   ErrorDocument 401 /index.php/errors/message/authorization_required
+   ErrorDocument 403 /index.php/errors/message/access_denied
+   ErrorDocument 404 /index.php/errors/message/page_not_found
+
+</VirtualHost>

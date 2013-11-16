@@ -1,0 +1,10 @@
+---
+# Contains the variables for the web role.
+#
+# Author: Mark Johnman
+# Date Last Modified: 17/11/13
+
+apache_user_name: "apache"
+apache_group_name: "apache"
+source_code_directory: "/vagrant/source_code"
+php_session_save_path: "/var/lib/php/session"

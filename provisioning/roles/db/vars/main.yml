@@ -1,0 +1,13 @@
+---
+# Contains the variables for the db role.
+#
+# It should be noted that the passwords were generated from https://www.random.org/passwords.
+#
+# Author: Mark Johnman
+# Date Last Modified: 17/11/13
+
+db_root_user_password: "fv9xApaMsGX2xfUraRM89pPuyMB736K4"
+db_application_user_name: "BSI_User"
+db_application_user_password: "DpC3YWUgwQAdGGzvLqaYsEcBdrYnPtkG"
+application_db_name: "BSI_Notes_Application"
+vagrant_host_name: "precise32"

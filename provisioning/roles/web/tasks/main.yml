@@ -1,0 +1,99 @@
+---
+# Contains the tasks for the web role.
+#
+# Author: Mark Johnman
+# Date Last Modified: 17/11/13
+
+# Installs and sets up a firewall
+
+- name: install the latest version of Uncomplicated Firewall (UFW)
+  apt: pkg=ufw state=latest 
+
+- name: use UFW to ensure that the server can only be accessed by the specified ports
+  command: ufw allow "{{ item }}" 
+  with_items:
+    - 80/tcp
+    - 22/tcp
+
+- name: ensure that UFW is running and enable it so that it will start every time the machine is booted
+  service: name=ufw state=started enabled=yes
+
+# Prepares the machine for the installation of the Apache Web Server (apache)
+
+- name: add a group for the user that will run apache
+  group: name="{{ apache_group_name }}" state=present
+
+- name: add a user that will be used to run apache
+  user: name="{{ apache_user_name }}" state=present group="{{ apache_group_name }}" home="{{ source_code_directory }}" shell="/sbin/nologin"
+
+- name: ensure that the source code directory is owned by the apache user
+  command: "chown -R {{ apache_user_name }}:{{ apache_group_name }} {{ source_code_directory }}"
+        
+#- name: ensure that the source code directory cannot be written to (i.e. only read or executed)
+#  command: "chmod -R 0555 {{ source_code_directory }}"
+
+# Installs and configures apache 
+
+- name: install the latest version of apache
+  apt: pkg=apache2 state=latest
+
+- name: disable several apache modules that will not be used by the application
+  command: a2dismod "{{ item }}"
+  with_items:
+    - userdir
+    - autoindex
+    - status
+    - env
+    - setenvif
+    - cgi
+    - actions
+    - negotiation
+    - alias
+    - include
+    - filter
+    - version
+    - asis
+  notify: restart apache
+
+- name: enable the url rewrite module for apache as it will be required by the application
+  command: "a2enmod rewrite"
+  notify: restart apache
+  
+- name: disable default apache site
+  command: "a2dissite 000-default"
+  notify: restart apache
+  
+- name: provide apache with the configuration file required for the application
+  template: src=bsi-notes-application.j2 dest=/etc/apache2/sites-available/bsi-notes-application
+  notify: restart apache 
+  
+- name: enable the application site
+  command: "a2ensite bsi-notes-application"
+  notify: restart apache
+
+# Installs and configures PHP 
+
+- name: install the latest version of PHP and the PHP5-MySQL extension (required to connect to MySQL databases from PHP). 
+  apt: pkg="{{ item }}" state=latest
+  with_items:
+    - "php5"
+    - "php5-mysql"
+  notify: restart apache
+
+- name: ensures that the directory where PHP session data will be stored is present with the appropriate owner and permissions
+  command: "{{ item }}"
+  with_items: 
+    - "mkdir -p {{ php_session_save_path }}"
+    - "chown -R {{ apache_user_name }}:{{ apache_group_name }} {{ php_session_save_path }}"
+    - "chmod -R 0700 {{ php_session_save_path }}"
+
+- name: provide PHP with the configuration file needed for the notes application
+  template: src=php.ini.j2 dest=/etc/php5/apache2/php.ini
+  notify: restart apache
+
+# Performs final machine configuration 
+
+- name: ensure that Apache is running and enable it so that it will start every time the machine is booted
+  service: name=apache2 state=started enabled=yes
+
+

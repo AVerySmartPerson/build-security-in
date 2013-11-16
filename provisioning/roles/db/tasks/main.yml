@@ -1,0 +1,51 @@
+---
+# Contains the tasks for the db role.
+#
+# Author: Mark Johnman
+# Date Last Modified: 17/11/13
+
+- name: install MySQL, MySQLdb Python (required to use ansible modules mysql_user and mysql_db) 
+  apt: pkg="{{ item }}" state=latest
+  with_items:
+    - "mysql-server"
+    - "python-mysqldb"
+
+- name: remove any anonymous users from MySQL
+  mysql_user: name="" host="{{ item }}" state=absent
+  with_items:
+    - "{{ vagrant_host_name }}"
+    - "localhost"
+  notify: restart mysql
+
+- name: remove test database (put in MySQL by default during installation)
+  mysql_db: name=test state=absent
+  notify: restart mysql
+
+- name: create application database
+  mysql_db: name="{{ application_db_name }}" state=present
+  notify: restart mysql
+
+- name: create application database tables (replacing any already in the database)
+  mysql_db: name="{{ application_db_name }}" state=import target="/vagrant/provisioning/roles/db/templates/setup.sql"
+  notify: restart mysql
+  
+- name: create user of the application database
+  mysql_user: name="{{ db_application_user_name }}" password="{{ db_application_user_password }}" priv="{{ application_db_name }}.*:SELECT,INSERT,UPDATE" host="localhost" state=present
+  notify: restart mysql
+  
+- name: update mysql root password for all root accounts
+  mysql_user: name="root" host="{{ item }}" password="{{ db_root_user_password }}" state=present
+  with_items:
+    - "{{ vagrant_host_name }}"
+    - "127.0.0.1"
+    - "::1"
+    - "localhost"
+  notify: restart mysql
+ 
+- name: provide MySQL with the configuration file required for the application
+  template: src=my.cnf.j2 dest="/root/.my.cnf" owner="root" mode=0600
+  notify: restart mysql
+  
+- name: ensure that MySQL is running and enable it so that it will start every time the machine is booted
+  service: name=mysql state=started enabled=yes
+  

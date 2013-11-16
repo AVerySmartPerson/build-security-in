@@ -1,0 +1,8 @@
+---
+# Contains the handlers for the common role.
+#
+# Author: Mark Johnman
+# Date Last Modified: 17/11/13
+
+- name: restart fail2ban
+  service: name=fail2ban state=restarted

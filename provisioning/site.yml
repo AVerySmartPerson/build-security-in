@@ -1,0 +1,28 @@
+---
+# The main playbook for the Build Security In notes application. 
+# This playbook installs and configures the LAMP stack that the notes application runs on. 
+#
+# Author: Mark Johnman
+# Date Last Modified: 17/11/13
+
+- name: apply the common configuration that is required by all hosts, regardless of their individual roles 
+  hosts: all
+  remote_user: vagrant
+  sudo: yes
+  roles: 
+    - common  
+
+- name: install and configure an Apache Web Server and PHP
+  hosts: all
+  remote_user: vagrant
+  sudo: yes
+  roles: 
+    - web
+
+- name: install and configure MySQL, as well as create the application database
+  hosts: all
+  remote_user: vagrant
+  sudo: yes
+  roles: 
+    - db
+

@@ -1,0 +1,24 @@
+---
+# Contains the tasks for the common role.
+#
+# Author: Mark Johnman
+# Date Last Modified: 17/11/13
+
+- name: update apt to ensure that the machine has access to the latest packages
+  apt: update_cache=yes 
+
+- name: install the Network Time Protocol (used to ensure that all hosts are in synchronized time)
+  apt: pkg=ntp state=latest 
+
+- name: ensure ntp is running and enable it so that it will start every time the machine is booted
+  service: name=ntp state=started enabled=yes
+
+- name: install Fail2ban, an intrusion prevention framework - for more information, see http://www.fail2ban.org/wiki/index.php/Main_Page
+  apt: pkg=fail2ban state=latest
+
+- name: provide Fail2ban with the configuration file required for the notes application
+  template: src=jail.local.j2 dest=/etc/fail2ban
+  notify: restart fail2ban
+
+- name: ensure that Fail2ban is started and enable it so that it will start every time the machine is booted
+  service: name=fail2ban state=started enabled=yes
