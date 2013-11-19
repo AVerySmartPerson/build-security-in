@@ -49,12 +49,13 @@ if (!function_exists("xssClean")) {
 }
 
 /**
- * Checks if a session is valid by testing to see if the appropriate session variables are set. 
- * @return boolean true/false depending upon if the appropriate session variables are set.
+ * Checks if a session is valid by testing to see if the appropriate session variables are set, the session was started less than 2 hours (7200 
+ * seconds) ago and the most recent action was performed less than 30 minutes (1800 seconds) ago. 
+ * @return boolean true/false depending upon if the session is valid to be valid or not.
  */
 if (!function_exists("validateSession")) {
    function validateSession() {
-      return count($_SESSION) == 3 && isset($_SESSION["User_ID"]) && isset($_SESSION["First_Name"]) && isset($_SESSION["Last_Name"]);
+      return count($_SESSION) == 5 && isset($_SESSION["User_ID"]) && isset($_SESSION["First_Name"]) && isset($_SESSION["Last_Name"]) && isset($_SESSION["Session_Start_Time"]) && isset($_SESSION["Most_Recent_Action_Time"]) && time() - $_SESSION["Session_Start_Time"] < 7200 && time() - $_SESSION["Most_Recent_Action_Time"] < 1800;
    } 
 }
 

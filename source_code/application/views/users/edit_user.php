@@ -15,7 +15,7 @@
    <br>
    
    <?php 
-      if ($this->session->flashdata("error_email_invalid") || $this->session->flashdata("error_email_already_used") || $this->session->flashdata("error_first_name") || $this->session->flashdata("error_last_name") || $this->session->flashdata("error_password")) {
+      if ($this->session->flashdata("error_email_invalid") || $this->session->flashdata("error_email_already_used") || $this->session->flashdata("error_first_name") || $this->session->flashdata("error_last_name") || $this->session->flashdata("error_current_password") || $this->session->flashdata("error_password")) {
          
          echo "<section id='edit_user_error_messages' class='alert alert-danger alert-dismissable text-center center-block'>";
          
@@ -37,8 +37,8 @@
             echo "<p>" . xssClean($this->session->flashdata("error_last_name"), 255) . "</p>";
          }
          
-         if ($this->session->flashdata("current_password_error_message")) {
-            echo "<p>" . xssClean($this->session->flashdata("current_password_error_message"), 255) . "</p>";
+         if ($this->session->flashdata("error_current_password")) {
+            echo "<p>" . xssClean($this->session->flashdata("error_current_password"), 255) . "</p>";
          }
          
          if ($this->session->flashdata("error_password")) {

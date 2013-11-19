@@ -28,9 +28,6 @@
 
 - name: ensure that the source code directory is owned by the apache user
   command: "chown -R {{ apache_user_name }}:{{ apache_group_name }} {{ source_code_directory }}"
-        
-#- name: ensure that the source code directory cannot be written to (i.e. only read or executed)
-#  command: "chmod -R 0555 {{ source_code_directory }}"
 
 # Installs and configures apache 
 

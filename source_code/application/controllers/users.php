@@ -14,7 +14,7 @@ class Users extends CI_Controller {
    /**
     * Constructor that performs the initial set up of the controller and ensures that the session is valid (i.e. a user is actually logged in).
     * If the session isn't valid (i.e. the correct session variables aren't set or they don't belong to an active user of the 
-    * application), it's destroyed and the user is redirected back to the home page.
+    * application, or the session has timed out), it's destroyed and the user is redirected back to the home page.
     */
    public function __construct() {
       parent::__construct();    
@@ -23,6 +23,8 @@ class Users extends CI_Controller {
       if (!validateSession() || !$this->MUsers->verifyUser($_SESSION["User_ID"], $_SESSION["First_Name"], $_SESSION["Last_Name"])) {
          killSession();
          redirect("/welcome/index", "location");
+      } else {
+         $_SESSION["Most_Recent_Action_Time"] = time();
       }
    }
    

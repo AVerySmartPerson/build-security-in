@@ -671,8 +671,7 @@ class CI_Session {
 					$expire,
 					$this->cookie_path,
 					$this->cookie_domain,
-					$this->cookie_secure,
-					true
+					$this->cookie_secure
 				);
 	}
 

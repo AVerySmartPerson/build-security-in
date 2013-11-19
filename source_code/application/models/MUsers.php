@@ -135,6 +135,9 @@ class MUsers extends CI_Model {
             $_SESSION["User_ID"] = idClean($user_data["User_ID"], 11);
             $_SESSION["First_Name"] = xssClean($user_data["First_Name"], 60);
             $_SESSION["Last_Name"] = xssClean($user_data["Last_Name"], 60);
+            
+            $_SESSION["Session_Start_Time"] = time();
+            $_SESSION["Most_Recent_Action_Time"] = time();
 
             $query->free_result();
             return true;
@@ -215,7 +218,7 @@ class MUsers extends CI_Model {
       
       $current_password_correct = $this->isPasswordCorrect($current_plaintext_password);
       if (!$current_password_correct) {
-         $this->session->set_flashdata("current_password_error_message", "Sorry, your current password is incorrect!");
+         $this->session->set_flashdata("error_current_password", "Sorry, your current password is incorrect!");
       }
       
       return $user_valid && $current_password_correct;
