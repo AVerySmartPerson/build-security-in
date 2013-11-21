@@ -20,4 +20,4 @@ To use/test the application, simple fork and/or clone this repository, cd
 into the cloned folder and type 'vagrant up' for the initial set up to be
 performed. Following this, open a web browser and visit
 http://localhost:8080/. Remember, in order for 'vagrant up' to work properly,
-you should have both Vangrant and Ansible installed on your machine. 
+you should have both Vagrant and Ansible 1.4 installed on your machine. 
